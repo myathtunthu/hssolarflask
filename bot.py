@@ -181,10 +181,6 @@ def send_welcome(message):
 3. ဆိုလာပြားလိုအပ်ချက်
 4. အင်ဗာတာအရွယ်အစား
 5. Charger Controller
-
-🔧 *အသုံးပြုနည်း:*
-/calculate - တွက်ချက်ရန်
-/help - အကူအညီ
         """
         
         # Create inline keyboard with "တွက်ချက်မည်" button
@@ -201,63 +197,39 @@ def send_welcome(message):
 @bot.callback_query_handler(func=lambda call: call.data == 'start_calculation')
 def handle_calculate_callback(call):
     try:
-        # Send a new message to start calculation
-        msg = bot.send_message(call.message.chat.id, "🔧 *တွက်ချက်မှုစတင်နေပါသည်...*", parse_mode='Markdown')
+        chat_id = call.message.chat.id
+        user_data[chat_id] = {}
         
-        # Create a new message object for start_calculation
-        class FakeMessage:
-            def __init__(self, chat_id, message_id):
-                self.chat = type('obj', (object,), {'id': chat_id})()
-                self.message_id = message_id
-                self.text = ""
-                self.from_user = call.from_user
-        
-        # Create fake message object
-        fake_msg = FakeMessage(call.message.chat.id, msg.message_id)
-        
-        # Start the calculation process
-        start_calculation(fake_msg)
-        
-    except Exception as e:
-        print("Error in callback handler:", e)
-        bot.send_message(call.message.chat.id, "❌ အမှားတစ်ခုဖြစ်နေပါတယ်")
-
-@bot.message_handler(commands=['help'])
-def send_help(message):
-    help_text = """
-📖 *အဆင့် ၅ ဆင့်ဖြင့် ဆိုလာစနစ်တွက်ချက်နည်း*
-
-/calculate ကိုနှိပ်ပြီး စတင်တွက်ချက်ပါ။
-        """
-    bot.reply_to(message, help_text, parse_mode='Markdown')
-
-@bot.message_handler(commands=['calculate'])
-def start_calculation(message):
-    try:
-        user_data[message.chat.id] = {}
-        
-        markup = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True, row_width=2)
+        # Ask if user knows total wattage with inline keyboard
+        markup = types.InlineKeyboardMarkup(row_width=2)
         buttons = [
-            types.KeyboardButton("သိပါသည်"),
-            types.KeyboardButton("မသိပါ")
+            types.InlineKeyboardButton("✅ သိပါသည်", callback_data='know_wattage_yes'),
+            types.InlineKeyboardButton("❌ မသိပါ", callback_data='know_wattage_no')
         ]
         markup.add(*buttons)
         
-        msg = bot.reply_to(message, "🔌 *သင့်စုစုပေါင်းဝပ်အား (W) ကိုသိပါသလား?*\n\nအောက်က လေးထောင့်ခလုတ်မှနှိပ်၍ ရွေးချယ်ပါ", reply_markup=markup, parse_mode='Markdown')
-        bot.register_next_step_handler(msg, handle_wattage_knowledge)
-    except Exception as e:
-        print("Error in calculate:", e)
-        bot.reply_to(message, "❌ အမှားတစ်ခုဖြစ်နေပါတယ်")
-
-def handle_wattage_knowledge(message):
-    try:
-        chat_id = message.chat.id
-        response = message.text
+        bot.send_message(chat_id, "🔌 *သင့်စုစုပေါင်းဝပ်အား (W) ကိုသိပါသလား?*", 
+                        reply_markup=markup, parse_mode='Markdown')
         
-        if response == "သိပါသည်":
-            msg = bot.reply_to(message, "🔌 *ကျေးဇူးပြု၍ စုစုပေါင်းဝပ်အား (W) ထည့်ပါ*\n\nဥပမာ: 500", reply_markup=types.ReplyKeyboardRemove(), parse_mode='Markdown')
+        bot.answer_callback_query(call.id)
+        
+    except Exception as e:
+        print("Error in callback handler:", e)
+        bot.answer_callback_query(call.id, "❌ အမှားတစ်ခုဖြစ်နေပါတယ်", show_alert=True)
+
+# Callback handler for wattage knowledge
+@bot.callback_query_handler(func=lambda call: call.data.startswith('know_wattage_'))
+def handle_wattage_knowledge_callback(call):
+    try:
+        chat_id = call.message.chat.id
+        
+        if call.data == 'know_wattage_yes':
+            # Ask for total wattage
+            msg = bot.send_message(chat_id, "🔌 *ကျေးဇူးပြု၍ စုစုပေါင်း�ဝပ်အား (W) ထည့်ပါ*\n\nဥပမာ: 500", parse_mode='Markdown')
             bot.register_next_step_handler(msg, ask_usage_hours)
-        elif response == "မသိပါ":
+            
+        elif call.data == 'know_wattage_no':
+            # Send wattage guide
             wattage_guide = """
 *အဆင့် 1- သင့်စွမ်းအင်သုံးစွဲမှုကို အကဲဖြတ်ခြင်း။*
 
@@ -280,7 +252,7 @@ def handle_wattage_knowledge(message):
 - ရေခဲသေတ္တာ (သေးငယ်သော): 100-150W
 - ရေခဲသေတ္တာ (ပုံမှန်): 150-250W
 - ရေခဲသေတ္တာ (ကြီးမားသော): 250-350W
--  မိုက်ခရိုဝေ့ဖ်: 800-1200W
+- မိုက်ခရိုဝေ့ဖ်: 800-1200W
 - လျှပ်စစ်အိုး: 1000-1500W
 - ရေနွေးအိုး: 1500-2000W
 - လေအေးပေး စက် (1 HP): 746W
@@ -323,7 +295,7 @@ def handle_wattage_knowledge(message):
 - တီဗီ ၁ လုံး (100W) = 1 × 100W = 100W
 - စုစုပေါင်း = 100W + 150W + 100W = 350W
 
-*ဥပမာ ၂ (စက်ရုံသုံး):*
+*ဥပမာ ၂ (စက်�ရုံသုံး):*
 - ပန်ကာ ၅ လုံး (300W) = 5 × 300W = 1500W
 - မီးသီး ၂၀ လုံး (50W) = 20 × 50W = 1000W
 - စက်ကိရိယာ (2000W) = 1 × 2000W = 2000W
@@ -331,14 +303,14 @@ def handle_wattage_knowledge(message):
 
 🔌 *ကျေးဇူးပြု၍ စုစုပေါင်းဝပ်အား (W) ထည့်ပါ*\n\nဥပမာ: 1500
             """
-            msg = bot.reply_to(message, wattage_guide, parse_mode='Markdown', reply_markup=types.ReplyKeyboardRemove())
+            msg = bot.send_message(chat_id, wattage_guide, parse_mode='Markdown')
             bot.register_next_step_handler(msg, ask_usage_hours)
-        else:
-            bot.reply_to(message, "❌ ကျေးဇူးပြု၍ 'သိပါသည်' သို့မဟုတ် 'မသိပါ' ကိုရွေးချယ်ပါ")
-            
+        
+        bot.answer_callback_query(call.id)
+        
     except Exception as e:
-        print("Error in handle_wattage_knowledge:", e)
-        bot.reply_to(message, "❌ အမှားတစ်ခုဖြစ်နေပါတယ်")
+        print("Error in wattage knowledge callback:", e)
+        bot.answer_callback_query(call.id, "❌ အမှားတစ်ခုဖြစ်နေပါတယ်", show_alert=True)
 
 def ask_usage_hours(message):
     try:
@@ -351,14 +323,14 @@ def ask_usage_hours(message):
             
         user_data[chat_id]['total_w'] = total_w
         msg = bot.reply_to(message, f"⏰ *တစ်ရက်ကိုဘယ်နှနာရီသုံးမှာလဲ?*\n\nဥပမာ: 6", parse_mode='Markdown')
-        bot.register_next_step_handler(msg, ask_battery_type_or_specific_products)  # Fixed this line
+        bot.register_next_step_handler(msg, process_hours_input)
     except ValueError:
         bot.reply_to(message, "❌ ကျေးဇူးပြု၍ ဂဏန်းမှန်မှန်ထည့်ပါ\n\nဥပမာ: 500")
     except Exception as e:
         print("Error in ask_usage_hours:", e)
         bot.reply_to(message, "❌ အမှားတစ်ခုဖြစ်နေပါတယ်")
 
-def ask_battery_type_or_specific_products(message):
+def process_hours_input(message):
     try:
         chat_id = message.chat.id
         hours = float(message.text)
@@ -369,42 +341,46 @@ def ask_battery_type_or_specific_products(message):
             
         user_data[chat_id]['hours'] = hours
         
-        markup = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True, row_width=2)
+        # Ask product selection with inline keyboard
+        markup = types.InlineKeyboardMarkup(row_width=2)
         buttons = [
-            types.KeyboardButton("A To Z ပစ္စည်းသုံးမည်"),
-            types.KeyboardButton("အခြားပစ္စည်းသုံးမည်")
+            types.InlineKeyboardButton("🏭 A To Z ပစ္စည်းသုံးမည်", callback_data='product_a_to_z'),
+            types.InlineKeyboardButton("🔧 အခြားပစ္စည်းသုံးမည်", callback_data='product_other')
         ]
         markup.add(*buttons)
         
-        msg = bot.reply_to(message, "🔧 *ဘယ်လိုပစ္စည်းတွေသုံးမှာလဲ?*", reply_markup=markup, parse_mode='Markdown')
-        bot.register_next_step_handler(msg, process_product_selection)
+        bot.send_message(chat_id, "🔧 *ဘယ်�လိုပစ္စည်းတွေသုံးမှာလဲ?*", 
+                        reply_markup=markup, parse_mode='Markdown')
+        
     except ValueError:
         bot.reply_to(message, "❌ ကျေးဇူးပြု၍ ဂဏန်းမှန်မှန်ထည့်ပါ\n\nဥပမာ: 6")
     except Exception as e:
-        print("Error in ask_battery_type_or_specific_products:", e)
+        print("Error in process_hours_input:", e)
         bot.reply_to(message, "❌ အမှားတစ်ခုဖြစ်နေပါတယ်")
 
-def process_product_selection(message):
+# Callback handler for product selection
+@bot.callback_query_handler(func=lambda call: call.data.startswith('product_'))
+def handle_product_selection_callback(call):
     try:
-        chat_id = message.chat.id
-        selection = message.text
+        chat_id = call.message.chat.id
         
-        # Fix the button text comparison - remove extra space
-        if selection == "A To Z ပစ္စည်းသုံးမည်":  # Remove the extra space
-            total_w = user_data[chat_id]['total_w']
-            hours = user_data[chat_id]['hours']
-            
-            # Calculate with specific products
-            result = calculate_with_specific_products(total_w, hours)
-            
-            # Format the result
-            response = f"""
+        if call.data == 'product_a_to_z':
+            # Process A To Z products
+            if chat_id in user_data and 'total_w' in user_data[chat_id] and 'hours' in user_data[chat_id]:
+                total_w = user_data[chat_id]['total_w']
+                hours = user_data[chat_id]['hours']
+                
+                # Calculate with specific products
+                result = calculate_with_specific_products(total_w, hours)
+                
+                # Format the result
+                response = f"""
 📊 *Hsu Cho Solar Calculator - တွက်ချက်မှုရလဒ်များ (A To Z ပစ္စည်းများဖြင့်)*
 
 📝 *စွမ်းအင်သုံးစွဲမှုစာရင်း:*
 • *စုစုပေါင်းဝပ်အား:* {total_w}W
 • *နေ့စဉ်သုံး စွဲမည့်နာရီ:* {hours}h
-• *စုစုပေါင်း စွမ်းအင်သုံးစွဲမှု:* {result['daily_wh']:.0f} Wh/ရက်
+• *စုစုပေါင်း စွမ်းအင်သုံး�စွဲမှု:* {result['daily_wh']:.0f} Wh/ရက်
 
 🏭 *အကြံပြုထားသော ပစ္စည်းများ:*
 
@@ -426,9 +402,6 @@ def process_product_selection(message):
    - အမျိုးအစား: {result['suitable_inverter']['Type']}
    - အာမခံ: {result['suitable_inverter']['Warranty']}
 
-🎛️ *Charger Controller:*
-   - {result['controller_type']} {result['controller_amps']:.1f}A အရွယ်အစား
-
 💰 *စုစုပေါင်းကုန်ကျစရိတ်:* {result['total_cost']:,} ကျပ်
 
 💡 *အထူးအကြံပြုချက်များ:*
@@ -437,97 +410,109 @@ def process_product_selection(message):
    - *ဆိုလာပြား များ ကို နေရောင်ကောင်းစွာရသော နေရာတွင် တပ်ဆင်ပါ*
    - *အင်ဗာတာကို  လေဝင်လေထွက်ကောင်းသော နေရာတွင် ထားရှိပါ*
 
-📞 *အသေးစိတ်သိရှိလိုပါက ဆက်သွယ်ရန်: Hsu Cho Solar*
-            """
-            
-            # Add "Calculate Again" button
-            markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
-            markup.add(types.KeyboardButton("🔄 ထပ်တွက်ရန်"))
-            
-            bot.send_message(chat_id, response, parse_mode='Markdown', reply_markup=markup)
-            
-        elif selection == "အခြားပစ္စည်းသုံးမည်":
-            markup = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True, row_width=2)
-            buttons = [types.KeyboardButton(b_type) for b_type in BATTERY_TYPES]
+                """
+                
+                # Add "Calculate Again" button
+                markup = types.InlineKeyboardMarkup()
+                again_button = types.InlineKeyboardButton("🔄 ထပ်တွက်ရန်", callback_data='start_calculation')
+                markup.add(again_button)
+                
+                bot.send_message(chat_id, response, parse_mode='Markdown', reply_markup=markup)
+                
+        elif call.data == 'product_other':
+            # Process other products - ask for battery type
+            markup = types.InlineKeyboardMarkup(row_width=2)
+            buttons = [types.InlineKeyboardButton(b_type, callback_data=f'battery_type_{b_type.lower()}') for b_type in BATTERY_TYPES]
             markup.add(*buttons)
             
-            msg = bot.reply_to(message, "🔋 *ဘက်ထရီအမျိုးအစားရွေးချယ်ပါ*", reply_markup=markup, parse_mode='Markdown')
-            bot.register_next_step_handler(msg, process_battery_type)
-        else:
-            bot.reply_to(message, "❌ ကျေးဇူးပြု၍ ပေးထားသော option များထဲကရွေးချယ်ပါ")
-            
-    except Exception as e:
-        print("Error in process_product_selection:", e)
-        bot.reply_to(message, "❌ အမှားတစ်ခုဖြစ်နေပါတယ်")
+            bot.send_message(chat_id, "🔋 *ဘက်ထရီအမျိုးအစားရွေးချယ်ပါ*", 
+                            reply_markup=markup, parse_mode='Markdown')
         
-def process_battery_type(message):
+        bot.answer_callback_query(call.id)
+        
+    except Exception as e:
+        print("Error in product selection callback:", e)
+        bot.answer_callback_query(call.id, "❌ အမှားတစ်ခုဖြစ်နေပါတယ်", show_alert=True)
+
+# Callback handler for battery type selection
+@bot.callback_query_handler(func=lambda call: call.data.startswith('battery_type_'))
+def handle_battery_type_callback(call):
     try:
-        chat_id = message.chat.id
-        battery_type = message.text
+        chat_id = call.message.chat.id
+        battery_type = call.data.replace('battery_type_', '').capitalize()
         
         if battery_type not in BATTERY_TYPES:
-            bot.reply_to(message, "❌ ကျေးဇူးပြု၍ ပေးထားသော option များထဲကရွေးချယ်ပါ", reply_markup=types.ReplyKeyboardRemove())
+            bot.answer_callback_query(call.id, "❌ အမှားတစ်ခုဖြစ်နေပါတယ်", show_alert=True)
             return
             
         user_data[chat_id]['battery_type'] = battery_type
         
-        markup = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True, row_width=3)
-        buttons = [types.KeyboardButton(f"{wattage}W") for wattage in SOLAR_PANEL_WATTAGES]
+        # Ask for solar panel wattage
+        markup = types.InlineKeyboardMarkup(row_width=3)
+        buttons = [types.InlineKeyboardButton(f"{wattage}W", callback_data=f'panel_{wattage}') for wattage in SOLAR_PANEL_WATTAGES]
         markup.add(*buttons)
         
-        msg = bot.reply_to(message, "☀️ *ဆိုလာပြား Wattage ရွေးချယ်ပါ*", reply_markup=markup, parse_mode='Markdown')
-        bot.register_next_step_handler(msg, process_solar_panel)
-    except Exception as e:
-        print("Error in process_battery_type:", e)
-        bot.reply_to(message, "❌ အမှားတစ်ခုဖြစ်နေပါတယ်")
-
-def process_solar_panel(message):
-    try:
-        chat_id = message.chat.id
-        panel_text = message.text
+        bot.send_message(chat_id, "☀️ *ဆိုလာပြား Wattage ရွေးချယ်ပါ*", 
+                        reply_markup=markup, parse_mode='Markdown')
         
-        panel_wattage = int(panel_text.replace("W", ""))
+        bot.answer_callback_query(call.id)
+        
+    except Exception as e:
+        print("Error in battery type callback:", e)
+        bot.answer_callback_query(call.id, "❌ အမှားတစ်ခုဖြစ်နေပါတယ်", show_alert=True)
+
+# Callback handler for solar panel selection
+@bot.callback_query_handler(func=lambda call: call.data.startswith('panel_'))
+def handle_solar_panel_callback(call):
+    try:
+        chat_id = call.message.chat.id
+        panel_wattage = int(call.data.replace('panel_', ''))
         
         if panel_wattage not in SOLAR_PANEL_WATTAGES:
-            bot.reply_to(message, "❌ ကျေးဇူးပြု၍ ပေးထားသော option များထဲကရွေးချ�်ပါ", reply_markup=types.ReplyKeyboardRemove())
+            bot.answer_callback_query(call.id, "❌ အမှားတစ်ခုဖြစ်နေပါတယ်", show_alert=True)
             return
             
         user_data[chat_id]['panel_wattage'] = panel_wattage
         
-        markup = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True, row_width=3)
-        buttons = [types.KeyboardButton(f"{voltage}V") for voltage in BATTERY_VOLTAGES]
+        # Ask for battery voltage
+        markup = types.InlineKeyboardMarkup(row_width=3)
+        buttons = [types.InlineKeyboardButton(f"{voltage}V", callback_data=f'voltage_{voltage}') for voltage in BATTERY_VOLTAGES]
         markup.add(*buttons)
         
-        msg = bot.reply_to(message, "⚡ *ဘက်ထရီဗို့အားရွေးချယ်ပါ*", reply_markup=markup, parse_mode='Markdown')
-        bot.register_next_step_handler(msg, process_battery_voltage)
-    except ValueError:
-        bot.reply_to(message, "❌ ကျေးဇူးပြု၍ ပေးထားသော option များထဲကရွေးချယ်ပါ", reply_markup=types.ReplyKeyboardRemove())
-    except Exception as e:
-        print("Error in process_solar_panel:", e)
-        bot.reply_to(message, "❌ အမှားတစ်ခုဖြစ်နေပါတယ်")
-
-def process_battery_voltage(message):
-    try:
-        chat_id = message.chat.id
-        voltage_text = message.text
+        bot.send_message(chat_id, "⚡ *ဘက်ထရီဗို့အားရွေးချယ်ပါ*", 
+                        reply_markup=markup, parse_mode='Markdown')
         
-        battery_voltage = float(voltage_text.replace("V", ""))
+        bot.answer_callback_query(call.id)
+        
+    except Exception as e:
+        print("Error in solar panel callback:", e)
+        bot.answer_callback_query(call.id, "❌ အမှားတစ်ခုဖြစ်နေပါတယ်", show_alert=True)
+
+# Callback handler for battery voltage selection
+@bot.callback_query_handler(func=lambda call: call.data.startswith('voltage_'))
+def handle_battery_voltage_callback(call):
+    try:
+        chat_id = call.message.chat.id
+        battery_voltage = float(call.data.replace('voltage_', ''))
         
         if battery_voltage not in BATTERY_VOLTAGES:
-            bot.reply_to(message, "❌ ကျေးဇူးပြု၍ ပေးထားသော option များထဲကရွေးချ�်ပါ", reply_markup=types.ReplyKeyboardRemove())
+            bot.answer_callback_query(call.id, "❌ အမှားတစ်ခုဖြစ်နေပါတယ်", show_alert=True)
             return
         
+        # Get all stored data
         total_w = user_data[chat_id]['total_w']
         hours = user_data[chat_id]['hours']
         panel_wattage = user_data[chat_id]['panel_wattage']
         battery_type = user_data[chat_id]['battery_type']
         
+        # Perform calculations
         daily_wh = calculate_daily_consumption(total_w, hours)
         battery_ah, dod_factor = calculate_battery_size(daily_wh, battery_voltage, battery_type.lower())
         solar_w, num_panels = calculate_solar_panels(daily_wh, panel_wattage)
         inverter_w = calculate_inverter_size(total_w)
         controller_type, controller_amps = calculate_charge_controller(solar_w, battery_voltage)
         
+        # Format result
         result = f"""
 📊 *Hsu Cho Solar Calculator - တွက်ချက် မှုရလဒ်များ*
 
@@ -573,26 +558,51 @@ def process_battery_voltage(message):
 """
         
         result += """
-   - *ဆိုလာပြားများကို နေရောင်ကောင်းစွာရသော နေရာတွင် တပ်ဆင်ပါ*
-   - *အင်ဗာတာကို လေဝင်�လေထွက်ကောင်းသော နေရာတွင် ထားရှိပါ*
+   - *ဆို�လာပြားများကို နေရောင်ကောင်းစွာရသော နေရာတွင် တပ်ဆင်ပါ*
+   - *အင်ဗာတာကို လေဝင်လေထွက်ကောင်းသော နေရာတွင် ထားရှိပါ*
 
-📞 *အသေးစိတ်သိရှိလိုပါက ဆက်သွယ်ရန်: Hsu Cho Solar*
-"""
         
         # Add "Calculate Again" button
-        markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
-        markup.add(types.KeyboardButton("🔄 ထပ်တွက်ရန်"))
+        markup = types.InlineKeyboardMarkup()
+        again_button = types.InlineKeyboardButton("🔄 ထပ်တွက်ရန်", callback_data='start_calculation')
+        markup.add(again_button)
         
         bot.send_message(chat_id, result, parse_mode='Markdown', reply_markup=markup)
         
+        bot.answer_callback_query(call.id)
+        
     except Exception as e:
-        print("Error in process_battery_voltage:", e)
-        bot.reply_to(message, "❌ အမှားတစ်ခုဖြစ်နေပါတယ်")
+        print("Error in battery voltage callback:", e)
+        bot.answer_callback_query(call.id, "❌ အမှားတစ်ခုဖြစ်နေပါတယ်", show_alert=True)
 
-# Handle "Calculate Again" button
-@bot.message_handler(func=lambda message: message.text == "🔄 ထပ်တွက်ရန်")
-def handle_calculate_again(message):
-    start_calculation(message)
+@bot.message_handler(commands=['help'])
+def send_help(message):
+    help_text = """
+📖 *အဆင့် ၅ ဆင့်ဖြင့် ဆိုလာစနစ်တွက်ချက်နည်း*
+
+တွက်ချက်ရန် ခလုတ်ကိုနှိပ်၍ စတင်တွက်ချက်ပါ။
+        """
+    bot.reply_to(message, help_text, parse_mode='Markdown')
+
+@bot.message_handler(commands=['calculate'])
+def start_calculation_command(message):
+    """Handle /calculate command"""
+    try:
+        user_data[message.chat.id] = {}
+        
+        # Ask if user knows total wattage with inline keyboard
+        markup = types.InlineKeyboardMarkup(row_width=2)
+        buttons = [
+            types.InlineKeyboardButton("✅ သိပါသည်", callback_data='know_wattage_yes'),
+            types.InlineKeyboardButton("❌ မသိပါ", callback_data='know_wattage_no')
+        ]
+        markup.add(*buttons)
+        
+        bot.send_message(message.chat.id, "🔌 *သင့်စုစုပေါင်းဝပ်အား (W) ကိုသိပါသလား?*", 
+                        reply_markup=markup, parse_mode='Markdown')
+    except Exception as e:
+        print("Error in calculate command:", e)
+        bot.reply_to(message, "❌ အမှားတစ်ခုဖြစ်နေပါတယ်")
 
 if __name__ == "__main__":
     # Set webhook on startup
@@ -601,5 +611,3 @@ if __name__ == "__main__":
     # Start Flask app
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
-
-
