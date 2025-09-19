@@ -357,7 +357,8 @@ def process_product_selection(message):
         chat_id = message.chat.id
         selection = message.text
         
-        if selection == "A To Z ပစ္စည်းသုံး မည်":
+        # Fix the button text comparison - remove extra space
+        if selection == "A To Z ပစ္စည်းသုံးမည်":  # Remove the extra space
             total_w = user_data[chat_id]['total_w']
             hours = user_data[chat_id]['hours']
             
@@ -426,7 +427,7 @@ def process_product_selection(message):
     except Exception as e:
         print("Error in process_product_selection:", e)
         bot.reply_to(message, "❌ အမှားတစ်ခုဖြစ်နေပါတယ်")
-
+        
 def process_battery_type(message):
     try:
         chat_id = message.chat.id
@@ -568,3 +569,4 @@ if __name__ == "__main__":
     # Start Flask app
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
+
