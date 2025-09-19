@@ -201,11 +201,22 @@ def send_welcome(message):
 @bot.callback_query_handler(func=lambda call: call.data == 'start_calculation')
 def handle_calculate_callback(call):
     try:
-        # Delete the original message with the button (optional)
-        bot.delete_message(call.message.chat.id, call.message.message_id)
+        # Send a new message to start calculation
+        msg = bot.send_message(call.message.chat.id, "🔧 *တွက်ချက်မှုစတင်နေပါသည်...*", parse_mode='Markdown')
+        
+        # Create a new message object for start_calculation
+        class FakeMessage:
+            def __init__(self, chat_id, message_id):
+                self.chat = type('obj', (object,), {'id': chat_id})()
+                self.message_id = message_id
+                self.text = ""
+                self.from_user = call.from_user
+        
+        # Create fake message object
+        fake_msg = FakeMessage(call.message.chat.id, msg.message_id)
         
         # Start the calculation process
-        start_calculation(call.message)
+        start_calculation(fake_msg)
         
     except Exception as e:
         print("Error in callback handler:", e)
@@ -590,4 +601,5 @@ if __name__ == "__main__":
     # Start Flask app
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
+
 
