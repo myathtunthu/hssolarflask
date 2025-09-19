@@ -578,7 +578,7 @@ def handle_battery_voltage_callback(call):
 @bot.message_handler(commands=['help'])
 def send_help(message):
     help_text = """
-*အဆင့် ၅ ဆင့်ဖြင့် ဆိုလာစနစ်တွက်ချက်နည်း*
+အဆင့်ဆင့်ဆိုလာစနစ်တွက်ချက်နည်း*
 
 တွက်ချက်ရန် ခလုတ်ကိုနှိပ်၍ စတင်တွက်ချက်ပါ။
         """
@@ -611,4 +611,5 @@ if __name__ == "__main__":
     # Start Flask app
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
+
 
