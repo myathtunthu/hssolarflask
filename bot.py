@@ -319,14 +319,14 @@ def ask_usage_hours(message):
             
         user_data[chat_id]['total_w'] = total_w
         msg = bot.reply_to(message, f"⏰ *တစ်ရက်ကိုဘယ်နှနာရီသုံးမှာလဲ?*\n\nဥပမာ: 6", parse_mode='Markdown')
-        bot.register_next_step_handler(msg, ask_product_selection)
+        bot.register_next_step_handler(msg, ask_battery_type_or_specific_products)  # Fixed this line
     except ValueError:
         bot.reply_to(message, "❌ ကျေးဇူးပြု၍ ဂဏန်းမှန်မှန်ထည့်ပါ\n\nဥပမာ: 500")
     except Exception as e:
         print("Error in ask_usage_hours:", e)
         bot.reply_to(message, "❌ အမှားတစ်ခုဖြစ်နေပါတယ်")
 
-def ask_product_selection(message):
+def ask_battery_type_or_specific_products(message):
     try:
         chat_id = message.chat.id
         hours = float(message.text)
@@ -349,7 +349,7 @@ def ask_product_selection(message):
     except ValueError:
         bot.reply_to(message, "❌ ကျေးဇူးပြု၍ ဂဏန်းမှန်မှန်ထည့်ပါ\n\nဥပမာ: 6")
     except Exception as e:
-        print("Error in ask_product_selection:", e)
+        print("Error in ask_battery_type_or_specific_products:", e)
         bot.reply_to(message, "❌ အမှားတစ်ခုဖြစ်နေပါတယ်")
 
 def process_product_selection(message):
@@ -456,7 +456,7 @@ def process_solar_panel(message):
         panel_wattage = int(panel_text.replace("W", ""))
         
         if panel_wattage not in SOLAR_PANEL_WATTAGES:
-            bot.reply_to(message, "❌ ကျေးဇူးပြု၍ ပေးထားသော option များထဲကရွေးချယ်ပါ", reply_markup=types.ReplyKeyboardRemove())
+            bot.reply_to(message, "❌ ကျေးဇူးပြု၍ ပေးထားသော option များထဲကရွေးချ�်ပါ", reply_markup=types.ReplyKeyboardRemove())
             return
             
         user_data[chat_id]['panel_wattage'] = panel_wattage
@@ -481,7 +481,7 @@ def process_battery_voltage(message):
         battery_voltage = float(voltage_text.replace("V", ""))
         
         if battery_voltage not in BATTERY_VOLTAGES:
-            bot.reply_to(message, "❌ ကျေးဇူးပြု၍ ပေးထားသော option များထဲကရွေးချယ်ပါ", reply_markup=types.ReplyKeyboardRemove())
+            bot.reply_to(message, "❌ ကျေးဇူးပြု၍ ပေးထားသော option များထဲကရွေးချ�်ပါ", reply_markup=types.ReplyKeyboardRemove())
             return
         
         total_w = user_data[chat_id]['total_w']
@@ -541,7 +541,7 @@ def process_battery_voltage(message):
         
         result += """
    - *ဆိုလာပြားများကို နေရောင်ကောင်းစွာရသော နေရာတွင် တပ်ဆင်ပါ*
-   - *အင်ဗာတာကို လေဝင်လေထွက်ကောင်းသော နေရာတွင် ထားရှိပါ*
+   - *အင်ဗာတာကို လေဝင်�လေထွက်ကောင်းသော နေရာတွင် ထားရှိပါ*
 
 📞 *အသေးစိတ်သိရှိလိုပါက ဆက်သွယ်ရန်: Hsu Cho Solar*
 """
