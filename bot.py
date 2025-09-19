@@ -178,17 +178,38 @@ def send_welcome(message):
 
 1. စုစုပေါင်းစွမ်းအင်သုံးစွဲမှု
 2. ဘက်ထရီအရွယ်အစား
-3. ဆို လာပြားလိုအပ်ချက်
+3. ဆိုလာပြားလိုအပ်ချက်
 4. အင်ဗာတာအရွယ်အစား
-5. *Charger Controller*
+5. Charger Controller
 
 🔧 *အသုံးပြုနည်း:*
 /calculate - တွက်ချက်ရန်
 /help - အကူအညီ
         """
-        bot.reply_to(message, welcome_text, parse_mode='Markdown')
+        
+        # Create inline keyboard with "တွက်ချက်မည်" button
+        markup = types.InlineKeyboardMarkup()
+        calculate_button = types.InlineKeyboardButton("🔢 တွက်ချက်မည်", callback_data='start_calculation')
+        markup.add(calculate_button)
+        
+        bot.send_message(message.chat.id, welcome_text, parse_mode='Markdown', reply_markup=markup)
+        
     except Exception as e:
         print("Error in start:", e)
+
+# Callback handler for the calculate button
+@bot.callback_query_handler(func=lambda call: call.data == 'start_calculation')
+def handle_calculate_callback(call):
+    try:
+        # Delete the original message with the button (optional)
+        bot.delete_message(call.message.chat.id, call.message.message_id)
+        
+        # Start the calculation process
+        start_calculation(call.message)
+        
+    except Exception as e:
+        print("Error in callback handler:", e)
+        bot.send_message(call.message.chat.id, "❌ အမှားတစ်ခုဖြစ်နေပါတယ်")
 
 @bot.message_handler(commands=['help'])
 def send_help(message):
