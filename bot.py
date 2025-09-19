@@ -225,7 +225,7 @@ def handle_wattage_knowledge_callback(call):
         
         if call.data == 'know_wattage_yes':
             # Ask for total wattage
-            msg = bot.send_message(chat_id, "🔌 *ကျေးဇူးပြု၍ စုစုပေါင်း�ဝပ်အား (W) ထည့်ပါ*\n\nဥပမာ: 500", parse_mode='Markdown')
+            msg = bot.send_message(chat_id, "🔌 *ကျေးဇူးပြု၍ စုစုပေါင်းဝပ်အား (W) ထည့်ပါ*\n\nဥပမာ: 500", parse_mode='Markdown')
             bot.register_next_step_handler(msg, ask_usage_hours)
             
         elif call.data == 'know_wattage_no':
@@ -255,9 +255,9 @@ def handle_wattage_knowledge_callback(call):
 - မိုက်ခရိုဝေ့ဖ်: 800-1200W
 - လျှပ်စစ်အိုး: 1000-1500W
 - ရေနွေးအိုး: 1500-2000W
-- လေအေးပေး စက် (1 HP): 746W
+- လေအေးပေးစက် (1 HP): 746W
 - လေအေးပေးစက် (1.5 HP): 1119W
-- လေအေးပေး စက် (2 HP): 1492W
+- လေအေးပေးစက် (2 HP): 1492W
 - ကြိတ်စက်: 300-500W
 - အဝတ်လျှော်စက်: 500-1000W
 - အဝတ်ခြောက်စက်: 1000-1500W
@@ -265,23 +265,23 @@ def handle_wattage_knowledge_callback(call):
 🏢 *ရုံးသုံးပစ္စည်း များ:*
 - ကွန်ပျူတာ (Desktop): 200-300W
 - ကွန်ပျူတာ (Laptop): 50-100W
-- ပရင် တာ: 50-150W
+- ပရင်တာ: 50-150W
 - မော်နီတာ: 20-50W
 - ပရိုဂျက်တာ: 200-300W
-- ဖက်စ် စက်: 50-100W
+- ဖက်စ်စက်: 50-100W
 - ရုံးမီးသီးများ: 20-40W
 - ရုံးပန်ကာများ: 75-150W
 
 🏭 *စက်ရုံသုံးပစ္စည်း များ:*
 - ပန်ကာ (စက်ရုံ): 200-500W
 - မီးသီး (စက်ရုံ): 50-100W
-- ပန့်အား (သေးငယ်သော): 750-1500W
-- ပန့်အား (အလတ်စား): 1500-3000W
-- ပန့်အား (ကြီးမားသော): 3000-5000W
+- ပန့်အား (သေးငယ်သော): 750-1500W
+- ပန့်အား (အလတ်စား): 1500-3000W
+- ပန့်အား (ကြီးမားသော): 3000-5000W
 - ကွန်ပရက်ဆာ (သေးငယ်သော): 1000-2000W
-- ကွန်ပရက်ဆာ (အလတ် စား): 2000-4000W
+- ကွန်ပရက်ဆာ (အလတ်စား): 2000-4000W
 - ကွန်ပရက်ဆာ (ကြီးမားသော): 4000-7500W
-- ဂျင် နရေတာ (အရန်သုံး): 500-2000W
+- ဂျင်နရေတာ (အရန်သုံး): 500-2000W
 - လျှပ်စစ် ကိရိယာများ: 500-3000W
 - စက်ကိရိယာများ: 1000-5000W
 
@@ -295,7 +295,7 @@ def handle_wattage_knowledge_callback(call):
 - တီဗီ ၁ လုံး (100W) = 1 × 100W = 100W
 - စုစုပေါင်း = 100W + 150W + 100W = 350W
 
-*ဥပမာ ၂ (စက်�ရုံသုံး):*
+*ဥပမာ ၂ (စက်ရုံသုံး):*
 - ပန်ကာ ၅ လုံး (300W) = 5 × 300W = 1500W
 - မီးသီး ၂၀ လုံး (50W) = 20 × 50W = 1000W
 - စက်ကိရိယာ (2000W) = 1 × 2000W = 2000W
@@ -322,7 +322,7 @@ def ask_usage_hours(message):
             return
             
         user_data[chat_id]['total_w'] = total_w
-        msg = bot.reply_to(message, f"⏰ *တစ်ရက်ကိုဘယ်နှနာရီသုံးမှာလဲ?*\n\nဥပမာ: 6", parse_mode='Markdown')
+        msg = bot.reply_to(message, f"⏰ *တစ်ရက်ကိုဘယ်နှစ်နာရီသုံးမှာလဲ?*\n\nဥပမာ: 6", parse_mode='Markdown')
         bot.register_next_step_handler(msg, process_hours_input)
     except ValueError:
         bot.reply_to(message, "❌ ကျေးဇူးပြု၍ ဂဏန်းမှန်မှန်ထည့်ပါ\n\nဥပမာ: 500")
@@ -349,7 +349,7 @@ def process_hours_input(message):
         ]
         markup.add(*buttons)
         
-        bot.send_message(chat_id, "🔧 *ဘယ်�လိုပစ္စည်းတွေသုံးမှာလဲ?*", 
+        bot.send_message(chat_id, "🔧 *ဘယ်လိုပစ္စည်းတွေသုံးမှာလဲ?*", 
                         reply_markup=markup, parse_mode='Markdown')
         
     except ValueError:
@@ -380,7 +380,7 @@ def handle_product_selection_callback(call):
 📝 *စွမ်းအင်သုံးစွဲမှုစာရင်း:*
 • *စုစုပေါင်းဝပ်အား:* {total_w}W
 • *နေ့စဉ်သုံး စွဲမည့်နာရီ:* {hours}h
-• *စုစုပေါင်း စွမ်းအင်သုံး�စွဲမှု:* {result['daily_wh']:.0f} Wh/ရက်
+• *စုစုပေါင်း စွမ်းအင်သုံးစွဲမှု:* {result['daily_wh']:.0f} Wh/ရက်
 
 🏭 *အကြံပြုထားသော ပစ္စည်းများ:*
 
@@ -392,13 +392,13 @@ def handle_product_selection_callback(call):
 
 🔋 *ဘက်ထရီ (Dyness):*
    - {result['batteries_needed']} လုံး × {PRODUCT_CATALOG['Dyness'][0]['Model']} ({PRODUCT_CATALOG['Dyness'][0]['Capacity']})
-   - စျေး နှုန်း: {result['battery_cost']:,} ကျပ်
+   - စျေးနှုန်း: {result['battery_cost']:,} ကျပ်
    - အမျိုးအစား: {PRODUCT_CATALOG['Dyness'][0]['Type']}
    - အာမခံ: {PRODUCT_CATALOG['Dyness'][0]['Warranty']}
 
 ⚡ *အင်ဗာတာ (Solis):*
    - 1 လုံး × {result['suitable_inverter']['Model']} ({result['suitable_inverter']['Capacity']})
-   - စျေး နှုန်း: {result['inverter_cost']:,} ကျပ်
+   - စျေးနှုန်း: {result['inverter_cost']:,} ကျပ်
    - အမျိုးအစား: {result['suitable_inverter']['Type']}
    - အာမခံ: {result['suitable_inverter']['Warranty']}
 
@@ -407,8 +407,8 @@ def handle_product_selection_callback(call):
 💡 *အထူးအကြံပြုချက်များ:*
    - *LiFePO4 ဘက်ထရီများသည် သက်တမ်းရှည်ပြီး စိတ်ချရမှုရှိသည်*
    - *80% Depth of Discharge အထိ အသုံးပြုနိုင်ပါသည်*
-   - *ဆိုလာပြား များ ကို နေရောင်ကောင်းစွာရသော နေရာတွင် တပ်ဆင်ပါ*
-   - *အင်ဗာတာကို  လေဝင်လေထွက်ကောင်းသော နေရာတွင် ထားရှိပါ*
+   - *ဆိုလာပြားများကို နေရောင်ကောင်းစွာရသော နေရာတွင် တပ်ဆင်ပါ*
+   - *အင်ဗာတာကို လေဝင်လေထွက်ကောင်းသော နေရာတွင် ထားရှိပါ*
 
                 """
                 
@@ -514,13 +514,13 @@ def handle_battery_voltage_callback(call):
         
         # Format result
         result = f"""
-📊 *Hsu Cho Solar Calculator - တွက်ချက် မှုရလဒ်များ*
+📊 *Hsu Cho Solar Calculator - တွက်ချက်မှုရလဒ်များ*
 
 🔋 *ဘက်ထရီအမျိုးအစား:* {battery_type}
 ⚡ *ဘက်ထရီဗို့အား:* {battery_voltage}V
 ☀️ *ဆိုလာပြား:* {panel_wattage}W
         
-📝 *စွမ်းအင်သုံး စွဲမှုစာရင်း:*
+📝 *စွမ်းအင်သုံးစွဲမှုစာရင်း:*
 • *စုစုပေါင်း ဝပ်အား:* {total_w}W
 • *နေ့စဉ်သုံး စွဲမည့်နာရီ:* {hours}h
 • *စုစုပေါင်း စွမ်းအင်သုံးစွဲမှု:* {daily_wh:.0f} Wh/ရက်
@@ -529,8 +529,8 @@ def handle_battery_voltage_callback(call):
    - {battery_type} ဘက်ထရီ (DOD: {dod_factor*100:.0f}%)
    - {battery_ah:.0f}Ah ဘက်ထရီ ၁လုံး (သို့) သေးငယ်သောဘက်ထရီများကို parallel ချိတ်ဆက်အသုံးပြုနိုင်သည်
 
-☀️ *ဆို လာပြားလိုအပ်ချက်:* _{solar_w:.0f} W_
-   - {panel_wattage}W ဆို လာပြား {num_panels} ချပ်
+☀️ *ဆိုလာပြားလိုအပ်ချက်:* _{solar_w:.0f} W_
+   - {panel_wattage}W ဆိုလာပြား {num_panels} ချပ်
 
 ⚡ *အင်ဗာတာအရွယ်အစား:* _{inverter_w:.0f} W Pure Sine Wave_
    - စုစုပေါင်း ဝပ်အားထက် 30% ပိုကြီးသော အင်ဗာတာရွေးချယ်ထားသည်
@@ -558,9 +558,9 @@ def handle_battery_voltage_callback(call):
 """
         
         result += """
-   - *ဆို�လာပြားများကို နေရောင်ကောင်းစွာရသော နေရာတွင် တပ်ဆင်ပါ*
+   - *ဆိုလာပြားများကို နေရောင်ကောင်းစွာရသော နေရာတွင် တပ်ဆင်ပါ*
    - *အင်ဗာတာကို လေဝင်လေထွက်ကောင်းသော နေရာတွင် ထားရှိပါ*
-
+"""
         
         # Add "Calculate Again" button
         markup = types.InlineKeyboardMarkup()
@@ -578,7 +578,7 @@ def handle_battery_voltage_callback(call):
 @bot.message_handler(commands=['help'])
 def send_help(message):
     help_text = """
-  အဆင့်ဆင့်ဆိုလာစနစ်တွက်ချက်နည်း
+*အဆင့်ဆင့်ဆိုလာစနစ်တွက်ချက်နည်း*
 
 တွက်ချက်ရန် ခလုတ်ကိုနှိပ်ပါ
         """
@@ -611,7 +611,3 @@ if __name__ == "__main__":
     # Start Flask app
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
-
-
-
-
