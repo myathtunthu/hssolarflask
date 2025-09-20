@@ -246,12 +246,12 @@ def handle_wattage_knowledge_callback(call):
 🏠 *အိမ်သုံးပစ္စည်း များ:*
 - LED မီးသီး (10W): 10-15W
 - ပန်ကာ (သေးငယ်သော): 50-75W
-- ပန်ကာ (ကြီးမားသော): 75-100W
+- ပန်ကာ (ကြီး�မားသော): 75-100W
 - တီဗီ (LED 32-inch): 30-50W
 - တီဗီ (LED 55-inch): 60-100W
 - ရေခဲသေတ္တာ (သေးငယ်သော): 100-150W
 - ရေခဲသေတ္တာ (ပုံမှန်): 150-250W
-- ရေခဲသေတ္တာ (ကြီးမားသော): 250-350W
+- ရေခဲသေတ္တာ (ကြီး�မားသော): 250-350W
 - မိုက်ခရိုဝေ့ဖ်: 800-1200W
 - လျှပ်စစ်အိုး: 1000-1500W
 - ရေနွေးအိုး: 1500-2000W
@@ -259,7 +259,7 @@ def handle_wattage_knowledge_callback(call):
 - လေအေးပေးစက် (1.5 HP): 1119W
 - လေအေးပေးစက် (2 HP): 1492W
 - ကြိတ်စက်: 300-500W
-- အဝတ်လျှော်စက်: 500-1000W
+- အဝတ်�လျှော်စက်: 500-1000W
 - အဝတ်ခြောက်စက်: 1000-1500W
 
 🏢 *ရုံးသုံးပစ္စည်း များ:*
@@ -277,17 +277,17 @@ def handle_wattage_knowledge_callback(call):
 - မီးသီး (စက်ရုံ): 50-100W
 - ပန့်အား (သေးငယ်သော): 750-1500W
 - ပန့်အား (အလတ်စား): 1500-3000W
-- ပန့်အား (ကြီးမားသော): 3000-5000W
+- ပန့်အား (ကြီး�မားသော): 3000-5000W
 - ကွန်ပရက်ဆာ (သေးငယ်သော): 1000-2000W
 - ကွန်ပရက်ဆာ (အလတ်စား): 2000-4000W
-- ကွန်ပရက်ဆာ (ကြီးမားသော): 4000-7500W
+- ကွန်ပရက်ဆာ (ကြီး�မားသော): 4000-7500W
 - ဂျင်နရေတာ (အရန်သုံး): 500-2000W
-- လျှပ်စစ် ကိရိယာများ: 500-3000W
+- လျှပ်�စစ် ကိရိယာများ: 500-3000W
 - စက်ကိရိယာများ: 1000-5000W
 
 *တွက်ချက် နည်း:*
 *Watt (W) = Voltage (V) × Current (A)*
-*စုစုပေါင်း ဝပ်အား = ပစ္စည်း တစ်ခုချင်းစီ၏ ဝပ်အား ပေါင်းခြင်း*
+*စုစုပေါင်း ဝပ်အား = ပစ္စည်း တစ်ခုချင်း�စီ၏ ဝပ်အား ပေါင်းခြင်း*
 
 *ဥပမာ ၁ (အိမ်သုံး):*
 - LED မီးသီး ၁၀ လုံး (10W) = 10 × 10W = 100W
@@ -391,7 +391,7 @@ def handle_product_selection_callback(call):
    - အာမခံ: {PRODUCT_CATALOG['Trinasolar'][0]['Warranty']}
 
 🔋 *ဘက်ထရီ (Dyness):*
-   - {result['batteries_needed']} လုံး × {PRODUCT_CATALOG['Dyness'][0]['Model']} ({PRODUCT_CATALOG['Dyness'][0]['Capacity']})
+   - {result['batteries_needed']} �လုံး × {PRODUCT_CATALOG['Dyness'][0]['Model']} ({PRODUCT_CATALOG['Dyness'][0]['Capacity']})
    - စျေးနှုန်း: {result['battery_cost']:,} ကျပ်
    - အမျိုးအစား: {PRODUCT_CATALOG['Dyness'][0]['Type']}
    - အာမခံ: {PRODUCT_CATALOG['Dyness'][0]['Warranty']}
@@ -405,10 +405,10 @@ def handle_product_selection_callback(call):
 💰 *စုစုပေါင်းကုန်ကျစရိတ်:* {result['total_cost']:,} ကျပ်
 
 💡 *အထူးအကြံပြုချက်များ:*
-   - *LiFePO4 ဘက်ထရီများသည် သက်တမ်းရှည်ပြီး စိတ်ချရမှုရှိသည်*
+   - *LiFePO4 ဘက်ထရီများသည် သက်တမ်း�ရှည်ပြီး စိတ်ချရမှုရှိသည်*
    - *80% Depth of Discharge အထိ အသုံးပြုနိုင်ပါသည်*
    - *ဆိုလာပြားများကို နေရောင်ကောင်းစွာရသော နေရာတွင် တပ်ဆင်ပါ*
-   - *အင်ဗာတာကို လေဝင်လေထွက်ကောင်းသော နေရာတွင် ထားရှိပါ*
+   - *အင်ဗာတာကို လေဝင်�လေထွက်ကောင်းသော နေရာတွင် ထားရှိပါ*
 
                 """
                 
@@ -422,7 +422,11 @@ def handle_product_selection_callback(call):
         elif call.data == 'product_other':
             # Process other products - ask for battery type
             markup = types.InlineKeyboardMarkup(row_width=2)
-            buttons = [types.InlineKeyboardButton(b_type, callback_data=f'battery_type_{b_type.lower()}') for b_type in BATTERY_TYPES]
+            buttons = []
+            for b_type in BATTERY_TYPES:
+                # Use underscores instead of hyphens for callback data
+                callback_data = f'battery_type_{b_type.lower().replace(" ", "_").replace("-", "_")}'
+                buttons.append(types.InlineKeyboardButton(b_type, callback_data=callback_data))
             markup.add(*buttons)
             
             bot.send_message(chat_id, "🔋 *ဘက်ထရီအမျိုးအစားရွေးချယ်ပါ*", 
@@ -439,9 +443,18 @@ def handle_product_selection_callback(call):
 def handle_battery_type_callback(call):
     try:
         chat_id = call.message.chat.id
-        battery_type = call.data.replace('battery_type_', '').capitalize()
+        battery_type_key = call.data.replace('battery_type_', '')
         
-        if battery_type not in BATTERY_TYPES:
+        # Convert back to proper battery type name
+        battery_type_mapping = {
+            'lifepo4': 'LiFePO4',
+            'lead_acid': 'Lead-Acid',
+            'gel': 'Gel'
+        }
+        
+        battery_type = battery_type_mapping.get(battery_type_key)
+        
+        if not battery_type:
             bot.answer_callback_query(call.id, "❌ အမှားတစ်ခုဖြစ်နေပါတယ်", show_alert=True)
             return
             
@@ -578,7 +591,7 @@ def handle_battery_voltage_callback(call):
 @bot.message_handler(commands=['help'])
 def send_help(message):
     help_text = """
-*အဆင့်ဆင့်ဆိုလာစနစ်တွက်ချက်နည်း*
+*အဆင့်ဆင့်ဆိုလာစနစ်�တွက်ချက်နည်း*
 
 တွက်ချက်ရန် ခလုတ်ကိုနှိပ်ပါ
         """
@@ -598,7 +611,7 @@ def start_calculation_command(message):
         ]
         markup.add(*buttons)
         
-        bot.send_message(message.chat.id, "🔌 *သင့်စုစုပေါင်းဝပ်အား (W) ကိုသိပါသလား?*", 
+        bot.send_message(message.chat.id, "🔌 *သင့်စုစုပေါင်း�ဝပ်အား (W) ကိုသိပါသလား?*", 
                         reply_markup=markup, parse_mode='Markdown')
     except Exception as e:
         print("Error in calculate command:", e)
